@@ -1,0 +1,50 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /fastta
+
+spring:
+  application:
+    name: fastta
+  profiles:
+    default: default
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/fastta?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: root
+      password: root
+  redis:
+    host: localhost
+    port: 6379
+
+fastta:
+  manage:
+    employee-default-password: 123456
+
+mybatis-plus:
+  configuration:
+    # map-underscore-to-camel-case: table_name <--> ClassName, column_name <--> attributeName
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: assign_id
+    banner: false
+
+security:
+  ignored:
+    urls: #SpringSecurity过滤白名单
+      - /**/*.html
+      - /**/*.js
+      - /**/*.css
+      - /**/*.png
+      - /**/*.jpg
+      - /**/*.ico
+      - /**/*.woff2
+      - /**/*.woff
+      - /**/*.ttf
+      - /**/*.map
+      - /employee/login
+      - /employee/logout
+
