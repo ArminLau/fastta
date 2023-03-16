@@ -30,10 +30,9 @@ public interface EmployeeService extends IService<Employee>, UserDetailsService 
     /**
      * 添加用户
      * @param employee
-     * @param authentication
      * @return
      */
-    boolean addEmployee(Employee employee, Authentication authentication);
+    boolean addEmployee(Employee employee);
 
     /**
      * 分页查询员工
@@ -47,8 +46,14 @@ public interface EmployeeService extends IService<Employee>, UserDetailsService 
     /**
      * 更新员工信息
      * @param employee
-     * @param authentication
      * @return
      */
-    boolean updateEmployee(Employee employee, Authentication authentication);
+    boolean updateEmployee(Employee employee);
+
+    /**
+     * 根据用户名查询员工
+     * @param username
+     * @return
+     */
+    Employee getEmployeeByUsername(String username);
 }

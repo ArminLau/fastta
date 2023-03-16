@@ -9,6 +9,7 @@ import com.linkstart.fastta.entity.Employee;
 import com.linkstart.fastta.exception.UsernameExistException;
 import com.linkstart.fastta.mapper.EmployeeMapper;
 import com.linkstart.fastta.service.EmployeeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +31,7 @@ import java.time.LocalDateTime;
  */
 
 @Service
+@Slf4j
 public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> implements EmployeeService {
     //添加Employee时使用的默认密码
     @Value("${fastta.manage.employee-default-password}")
@@ -41,7 +43,8 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private Employee getEmployeeByUsername(String username){
+    @Override
+    public Employee getEmployeeByUsername(String username){
         LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Employee::getUsername, username);
         return getOne(queryWrapper);
@@ -72,17 +75,16 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
     @Override
     public boolean handleLogout() {
-        System.out.println(SecurityContextHolder.getContext().getAuthentication());
         return true;
     }
 
     @Override
-    public boolean addEmployee(Employee employee, Authentication authentication) {
+    public boolean addEmployee(Employee employee) {
         if(getEmployeeByUsername(employee.getUsername()) != null){
             throw new UsernameExistException(employee.getUsername());
         }
-        employee.setPassword(passwordEncoder.encode(employeeDefaultPassword));
-        return save(packEmployee(employee, authentication));
+        employee.setPassword(employeeDefaultPassword);
+        return save(packEmployee(employee));
     }
 
     @Override
@@ -96,8 +98,8 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
     }
 
     @Override
-    public boolean updateEmployee(Employee employee, Authentication authentication) {
-        return updateById(packEmployee(employee, authentication));
+    public boolean updateEmployee(Employee employee) {
+        return updateById(packEmployee(employee));
     }
 
     /**
@@ -105,23 +107,20 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
      * @param employee
      * @return
      */
-    private Employee packEmployee(Employee employee, Authentication authentication){
+    private Employee packEmployee(Employee employee){
         Employee employeeWrapper = new Employee();
         employeeWrapper.setId(employee.getId());
         employeeWrapper.setName(employee.getName());
         employeeWrapper.setUsername(employee.getUsername());
-        employeeWrapper.setPassword(employee.getPassword());
+        if(StrUtil.isEmpty(employee.getPassword())){
+            employeeWrapper.setPassword(null);
+        }else {
+            employeeWrapper.setPassword(passwordEncoder.encode(employee.getPassword()));
+        }
         employeeWrapper.setPhone(employee.getPhone());
         employeeWrapper.setSex(employee.getSex());
         employeeWrapper.setIdNumber(employee.getIdNumber());
         employeeWrapper.setStatus(employee.getStatus());
-        Employee operator = (Employee) authentication.getPrincipal();
-        if(employee.getId() == null){
-            employeeWrapper.setCreateUser(operator.getId());
-            employeeWrapper.setCreateTime(LocalDateTime.now());
-        }
-        employeeWrapper.setUpdateTime(LocalDateTime.now());
-        employeeWrapper.setUpdateUser(operator.getId());
         return employeeWrapper;
     }
 }

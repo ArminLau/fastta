@@ -15,6 +15,14 @@ function isCellPhone (val) {
   }
 }
 
+//检查某个用户名是否存在
+function ifUsernameExist (username) {
+  return $axios({
+    url: `/employee/${username}`,
+    method: 'post'
+  })
+}
+
 //校验账号
 function checkUserName (rule, value, callback){
   if (value == "") {
@@ -22,7 +30,13 @@ function checkUserName (rule, value, callback){
   } else if (value.length > 20 || value.length <3) {
     callback(new Error("账号长度应是3-20"))
   } else {
-    callback()
+    ifUsernameExist(value).then(res => {
+      if(res.code == 1 && res.data == true){
+        callback(new Error("账户名:"+value+"已存在"))
+      }else {
+        callback()
+      }
+    });
   }
 }
 
@@ -58,5 +72,15 @@ function validID (rule,value,callback) {
     callback()
   } else {
     callback(new Error('身份证号码不正确'))
+  }
+}
+
+function validatePwd(rule, value, callback) {
+  //密码至少为6位
+  let reg = /(^[0-9a-zA-Z@#$%^&+=!?.]{6,18}$)/
+  if(value == '' || reg.test(value)){
+    callback()
+  }else {
+    callback(new Error("密码长度为6-18位, 由数字、大小写字母和标点符号其中一种或者组合构成"))
   }
 }

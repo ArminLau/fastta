@@ -3,11 +3,11 @@ package com.linkstart.fastta.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.linkstart.fastta.common.MyUserDetails;
 import com.linkstart.fastta.common.SecurityRole;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.List;
  * @Description: 员工的实体类
  */
 @Data
-public class Employee implements UserDetails {
+public class Employee implements MyUserDetails {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,8 +40,10 @@ public class Employee implements UserDetails {
 
     private Integer status;
 
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
     @TableField(fill = FieldFill.INSERT)
@@ -94,4 +96,6 @@ public class Employee implements UserDetails {
     public boolean isEnabled() {
         return this.status == 1 ? true : false;
     }
+
+
 }
