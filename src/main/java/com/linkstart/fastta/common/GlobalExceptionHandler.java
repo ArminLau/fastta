@@ -1,6 +1,7 @@
 package com.linkstart.fastta.common;
 
 import cn.hutool.core.util.ReUtil;
+import com.linkstart.fastta.exception.SystemTransactionException;
 import com.linkstart.fastta.exception.UsernameExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -22,10 +23,17 @@ import java.util.regex.Pattern;
 @Slf4j
 @ResponseBody
 public class GlobalExceptionHandler {
-    //添加用户时检测到用户名存在抛出此异常
+    //检测到用户名存在相同出现异常时进行处理
     @ExceptionHandler(UsernameExistException.class)
     public R usernameExistExceptionHandler(UsernameExistException exception){
         log.error("用户名:{}已存在，用户添加失败", exception.getUsername());
+        return R.validateFailed(exception.getMessage());
+    }
+
+    //检测到系统业务异常时进行处理
+    @ExceptionHandler(SystemTransactionException.class)
+    public R systemTransactionExceptionHandler(SystemTransactionException exception){
+        log.error(exception.getMessage());
         return R.validateFailed(exception.getMessage());
     }
 

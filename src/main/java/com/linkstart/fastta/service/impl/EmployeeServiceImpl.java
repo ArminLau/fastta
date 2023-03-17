@@ -10,6 +10,7 @@ import com.linkstart.fastta.exception.UsernameExistException;
 import com.linkstart.fastta.mapper.EmployeeMapper;
 import com.linkstart.fastta.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -109,18 +110,12 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
      */
     private Employee packEmployee(Employee employee){
         Employee employeeWrapper = new Employee();
-        employeeWrapper.setId(employee.getId());
-        employeeWrapper.setName(employee.getName());
-        employeeWrapper.setUsername(employee.getUsername());
+        BeanUtils.copyProperties(employee, employeeWrapper, "");
         if(StrUtil.isEmpty(employee.getPassword())){
             employeeWrapper.setPassword(null);
         }else {
             employeeWrapper.setPassword(passwordEncoder.encode(employee.getPassword()));
         }
-        employeeWrapper.setPhone(employee.getPhone());
-        employeeWrapper.setSex(employee.getSex());
-        employeeWrapper.setIdNumber(employee.getIdNumber());
-        employeeWrapper.setStatus(employee.getStatus());
         return employeeWrapper;
     }
 }

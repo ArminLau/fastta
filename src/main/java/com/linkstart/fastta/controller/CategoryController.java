@@ -32,4 +32,21 @@ public class CategoryController {
     public R queryCategoryPage(int page, int pageSize){
         return R.success(categoryService.queryCategoryPage(page, pageSize));
     }
+
+    @DeleteMapping
+    public R deleteCategory(@RequestParam(value = "ids", required = true) Long categoryId){
+        log.info("删除ID为{}的分类信息", categoryId);
+        return R.judge(categoryService.deleteCategory(categoryId), "分类删除成功", "分类删除失败");
+    }
+
+    @PutMapping
+    public R updateCategory(@RequestBody Category category){
+        log.info("更新ID为{}的分类信息", category.getId());
+        return R.judge(categoryService.updateById(category), "分类更新成功", "分类更新失败");
+    }
+
+    @GetMapping("/list")
+    public R queryCategory(Category category){
+        return R.success(categoryService.queryCategory(category));
+    }
 }

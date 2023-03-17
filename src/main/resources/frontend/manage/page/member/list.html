@@ -132,12 +132,13 @@
              tableData : [],
              id : '',
              status : '',
-             projectName: "fastta"
+             projectName: ''
           }
         },
         computed: {},
         created() {
           this.init()
+          this.projectName = window.localStorage.getItem("projectName")
           this.user = JSON.parse(localStorage.getItem('userInfo')).username
         },
         mounted() {

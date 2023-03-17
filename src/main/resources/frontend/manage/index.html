@@ -256,6 +256,7 @@
         },
         created() {
           const userInfo = window.localStorage.getItem('userInfo')
+          window.localStorage.setItem("projectName", this.projectName);
           if (userInfo) {
             this.userInfo = JSON.parse(userInfo)
           }

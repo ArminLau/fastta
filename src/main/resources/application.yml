@@ -19,6 +19,7 @@ spring:
     port: 6379
 
 fastta:
+  upload-path: default
   manage:
     employee-default-password: 123456
 

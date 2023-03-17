@@ -1,3 +1,12 @@
+// 查询菜品风味接口
+const getDishFlavor = (params) => {
+  return $axios({
+      url: '/dish/flavor',
+      method: 'get',
+      params
+  })
+}
+
 // 查询列表接口
 const getDishPage = (params) => {
   return $axios({

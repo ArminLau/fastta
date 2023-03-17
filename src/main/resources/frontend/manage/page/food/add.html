@@ -188,7 +188,7 @@
           >
             <el-upload
               class="avatar-uploader"
-              action="/common/upload"
+              action="/fastta/common/upload"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :on-change="onChange"
@@ -259,6 +259,7 @@
         el: '#food-add-app',
         data() {
           return {
+            projectName: '',
             id: '',
             restKey: 0,
             textarea: '',
@@ -321,6 +322,7 @@
           }
         },
         created() {
+          this.projectName = window.localStorage.getItem("projectName");
           this.getDishList()
           // 口味临时数据
           this.getFlavorListHand()
@@ -344,7 +346,7 @@
                 console.log('this.dishFlavors',this.dishFlavors)
                 // this.ruleForm.id = res.data.data.categoryId
                 // this.imageUrl = res.data.data.image
-                this.imageUrl = `/common/download?name=${res.data.image}`
+                this.imageUrl = "/"+this.projectName+`/common/download?name=${res.data.image}`
               } else {
                 this.$message.error(res.msg || '操作失败')
               }
@@ -401,12 +403,17 @@
           // 获取口味列表
           getFlavorListHand () {
             // flavor flavorData
-            this.dishFlavorsData = [
-              {'name':'甜味','value':['无糖','少糖','半糖','多糖','全糖']},
-              {'name':'温度','value':['热饮','常温','去冰','少冰','多冰']},
-              {'name':'忌口','value':['不要葱','不要蒜','不要香菜','不要辣']},
-              {'name':'辣度','value':['不辣','微辣','中辣','重辣']}
-            ]
+            getDishFlavor().then(res => {
+              this.dishFlavorsData = res.data;
+            }).catch(err => {
+              this.$message.error("请求出错了：" + err)
+            })
+            // this.dishFlavorsData = [
+            //   {'name':'甜味','value':['无糖','少糖','半糖','多糖','全糖']},
+            //   {'name':'温度','value':['热饮','常温','去冰','少冰','多冰']},
+            //   {'name':'忌口','value':['不要葱','不要蒜','不要香菜','不要辣']},
+            //   {'name':'辣度','value':['不辣','微辣','中辣','重辣']}
+            // ]
           },
 
           selectFlavor(st,index){
@@ -508,9 +515,9 @@
           handleAvatarSuccess (response, file, fileList) {
             // 拼接down接口预览
             if(response.code === 0 && response.msg === '未登录'){
-              window.top.location.href = '/backend/page/login/login.html'
+              window.top.location.href = '/'+this.projectName+'/manage/page/login/login.html'
             }else{
-              this.imageUrl = `/common/download?name=${response.data}`
+              this.imageUrl = "/"+this.projectName+`/common/download?name=${response.data}`
               this.ruleForm.image = response.data
             }
           },
@@ -535,7 +542,7 @@
           goBack(){
             window.parent.menuHandle({
               id: '4',
-              url: '/backend/page/food/list.html',
+              url: '/'+this.projectName+'/manage/page/food/list.html',
               name: '菜品管理'
             },false)
           }

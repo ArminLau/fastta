@@ -112,7 +112,7 @@
                 'idNumber': '',
                 username: ''
             },
-            projectName: "fastta"
+            projectName: ''
           }
         },
         computed: {
@@ -121,7 +121,7 @@
               //账号
               username: [
                 {
-                  required: true, 'validator': checkUserName, trigger: 'blur'
+                  required: true, 'validator': checkUserName, trigger: 'blur', id: this.id
                 }
               ],
               //姓名
@@ -132,6 +132,7 @@
           }
         },
         created() {
+          this.projectName = window.localStorage.getItem("projectName");
           this.id = requestUrlParam('id')
           this.actionType = this.id ? 'edit' : 'add'
           if (this.id) {

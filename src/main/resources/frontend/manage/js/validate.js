@@ -16,10 +16,10 @@ function isCellPhone (val) {
 }
 
 //检查某个用户名是否存在
-function ifUsernameExist (username) {
+function ifUsernameExist (username, userId) {
   return $axios({
-    url: `/employee/${username}`,
-    method: 'post'
+    url: `/employee/${username}`+"?id="+userId,
+    method: 'get',
   })
 }
 
@@ -30,8 +30,9 @@ function checkUserName (rule, value, callback){
   } else if (value.length > 20 || value.length <3) {
     callback(new Error("账号长度应是3-20"))
   } else {
-    ifUsernameExist(value).then(res => {
-      if(res.code == 1 && res.data == true){
+    var userId = rule.id;
+    ifUsernameExist(value, userId).then(res => {
+      if(res.code == 1 && res.data == false){
         callback(new Error("账户名:"+value+"已存在"))
       }else {
         callback()

@@ -63,10 +63,11 @@ public class EmployeeController {
         return employee != null ? R.success(employee) : R.error("没有查到到对应的员工信息");
     }
 
-    @PostMapping("/{username}")
-    public R ifUsernameExist(@PathVariable String username){
+    @GetMapping(value = "/{username}", params = {"id"})
+    public R ifUsernameAvailable(@PathVariable String username, long id){
+        log.debug("检测用户名[{}]是否可用", username);
         Employee employee = employeeService.getEmployeeByUsername(username);
-        return R.success(employee != null);
+        return R.success(employee == null || employee.getId() == id);
     }
 
     @PostMapping("/account")

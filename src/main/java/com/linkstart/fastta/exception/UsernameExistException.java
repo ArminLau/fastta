@@ -5,7 +5,7 @@ package com.linkstart.fastta.exception;
  * @Date: 2023/3/15
  * @Description: 自定义异常类:当检测到系统中存在同名的username时抛出此异常
  */
-public class UsernameExistException extends RuntimeException{
+public class UsernameExistException extends SystemTransactionException{
     private String username;
 
     public UsernameExistException(String username) {

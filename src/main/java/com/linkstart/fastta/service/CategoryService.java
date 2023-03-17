@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.linkstart.fastta.entity.Category;
 
+import java.util.List;
+
 /**
  * @Author: Armin
  * @Date: 2023/3/16
@@ -25,4 +27,18 @@ public interface CategoryService extends IService<Category> {
      * @return
      */
     Page<Category> queryCategoryPage(int pageNum, int pageSize);
+
+    /**
+     * 删除分类项目
+     * @param categoryId
+     * @return
+     */
+    boolean deleteCategory(long categoryId);
+
+    /**
+     * 根据提供的category条件查询分类信息
+     * @param category
+     * @return
+     */
+    List<Category> queryCategory(Category category);
 }
