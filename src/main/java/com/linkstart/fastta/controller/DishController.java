@@ -1,11 +1,14 @@
 package com.linkstart.fastta.controller;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.linkstart.fastta.common.R;
+import com.linkstart.fastta.common.ThreadContext;
 import com.linkstart.fastta.dto.DishDto;
 import com.linkstart.fastta.entity.Category;
 import com.linkstart.fastta.entity.Dish;
+import com.linkstart.fastta.entity.Employee;
 import com.linkstart.fastta.entity.Flavor;
 import com.linkstart.fastta.service.CategoryService;
 import com.linkstart.fastta.service.DishFlavorService;
@@ -14,6 +17,8 @@ import com.linkstart.fastta.service.FlavorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -43,7 +48,7 @@ public class DishController {
 
     @PostMapping
     public R saveDish(@RequestBody DishDto dishDto){
-        log.info("保存菜品:{}", dishDto.getName());
+        log.info("员工ID[{}]添加了新菜品: {}", ThreadContext.getOnlineUser().getId(), dishDto.getName());
         return R.judge(dishService.saveDish(dishDto), "保存菜品成功", "保存菜品失败");
     }
 
@@ -76,5 +81,31 @@ public class DishController {
         processedPage.setRecords(processedRecords);
 
         return R.success(processedPage);
+    }
+
+    @PutMapping
+    public R updateDish(@RequestBody DishDto dishDto){
+        log.info("员工ID[{}]更新了菜品: {}", ThreadContext.getOnlineUser().getId(), dishDto.getId());
+        return R.judge(dishService.updateDishWithFlavor(dishDto), "菜品信息更新成功", "菜品信息更新失败");
+    }
+
+    @GetMapping("/{id}")
+    public R getDish(@PathVariable Long id){
+        return R.success(dishService.getDishWithFlavor(id));
+    }
+
+    @PostMapping(value = "/status/{value}", params = {"ids"})
+    public R updateDishStatus(@PathVariable Integer value, String ids){
+        String operate = value == 1 ? "启售" : "停售";
+        log.info("员工ID[{}]{}了以下菜品: {}", ThreadContext.getOnlineUser().getId(), operate, ids);
+        List<Long> dishIds = CollUtil.map(StrUtil.split(ids, ","), Long::valueOf, true);
+        return R.judge(dishService.batchUpdateDishStatus(dishIds, value), "已成功"+operate+"指定的菜品", operate+"指定菜品失败");
+    }
+
+    @DeleteMapping
+    public R deleteDish(@RequestParam("ids") String ids){
+        log.info("员工ID[{}]删除了以下菜品: {}", ThreadContext.getOnlineUser().getId(), ids);
+        List<Long> dishIds = CollUtil.map(StrUtil.split(ids, ","), Long::valueOf, true);
+        return R.judge(dishService.batchDeleteDish(dishIds), "已成功删除指定的菜品", "删除指定菜品失败");
     }
 }

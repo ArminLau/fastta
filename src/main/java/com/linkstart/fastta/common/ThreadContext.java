@@ -1,5 +1,8 @@
 package com.linkstart.fastta.common;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,5 +36,14 @@ public class ThreadContext {
         }
         contextMap.remove(key);
         return true;
+    }
+
+    /**
+     * 获取系统当前登录用户的信息
+     * @return
+     */
+    public static MyUserDetails getOnlineUser(){
+        MyUserDetails userDetails = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userDetails;
     }
 }

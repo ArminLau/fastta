@@ -3,6 +3,8 @@ package com.linkstart.fastta.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -10,6 +12,7 @@ import java.time.LocalDateTime;
 菜品口味
  */
 @Data
+@NoArgsConstructor
 public class DishFlavor implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,4 +45,10 @@ public class DishFlavor implements Serializable {
 
     //是否删除
     private Integer isDeleted;
+
+    public DishFlavor(Long dishId, String name, String value){
+        this.dishId = dishId;
+        this.name = name;
+        this.value = value;
+    }
 }

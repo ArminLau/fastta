@@ -36,4 +36,32 @@ public interface DishService extends IService<Dish> {
      * @return
      */
     Page<Dish> queryDishPage(int pageNum, int pageSize, String name);
+
+    /**
+     * 根据提供的ID查询菜品信息
+     * @param id
+     * @return
+     */
+    DishDto getDishWithFlavor(Long id);
+
+    /**
+     * 更新菜品的信息
+     * @param dishDto
+     * @return
+     */
+    boolean updateDishWithFlavor(DishDto dishDto);
+
+    /**
+     * 根据提供的多个菜品ID批量删除菜品信息
+     * @param ids
+     * @return
+     */
+    boolean batchDeleteDish(List<Long> ids);
+
+    /**
+     * 根据提供的多个菜品ID批量更新菜品的售卖状态
+     * @param ids
+     * @return
+     */
+    boolean batchUpdateDishStatus(List<Long> ids, Integer status);
 }
