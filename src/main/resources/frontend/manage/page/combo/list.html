@@ -60,7 +60,7 @@
         ></el-table-column>
         <el-table-column prop="image" label="图片"  align="center">
           <template slot-scope="{ row }">
-            <el-image style="width: auto; height: 40px; border:none;cursor: pointer;" :src="getImage(row.image)" :preview-src-list="[ `/common/download?name=${row.image}` ]" >
+            <el-image style="width: auto; height: 40px; border:none;cursor: pointer;" :src="getImage(row.image)" :preview-src-list="[ `/fastta/common/download?name=${row.image}` ]" >
               <div slot="error" class="image-slot">
                 <img src="./../../images/noImg.png"  style="width: auto; height: 40px; border:none;" >
               </div> 
@@ -153,12 +153,14 @@
              pageSize: 10,
              tableData : [],
              dishState : '',
-             checkList: []
+             checkList: [],
+             projectName: ''
           }
         },
         computed: {},
         created() {
-          this.init()
+          this.init();
+          this.projectName = window.localStorage.getItem("projectName");
         },
         mounted() {
         },
@@ -179,7 +181,7 @@
             })
           },
           getImage (image) {
-            return `/common/download?name=${image}`
+            return `/fastta/common/download?name=${image}`
           },
           handleQuery() {
             this.page = 1;
@@ -190,13 +192,13 @@
             if (st === 'add'){
               window.parent.menuHandle({
                 id: '5',
-                url: '/backend/page/combo/add.html',
+                url: '/'+this.projectName+'/manage/page/combo/add.html',
                 name: '添加套餐'
               },true)
             } else {
               window.parent.menuHandle({
                 id: '5',
-                url: '/backend/page/combo/add.html?id='+st,
+                url: '/'+this.projectName+'/manage/page/combo/add.html?id='+st,
                 name: '修改套餐'
               },true)
             }

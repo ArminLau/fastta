@@ -14,9 +14,12 @@ import java.util.List;
  */
 @Data
 public class DishDto extends Dish {
+    //菜品中包含的口味选择
     private List<DishFlavor> flavors = new ArrayList<>();
 
+    //菜品所属的菜系名称
     private String categoryName;
 
+    //菜品的选择个数
     private Integer copies;
 }

@@ -68,7 +68,9 @@ public class DishController {
         //获取categoryId和categoryName的Map
         List<Category> categories = categoryService.list();
         Map<Long,String> categoryMap = new HashMap<>();
-        categories.stream().forEach(x -> categoryMap.put(x.getId(), x.getName()));
+        if(CollUtil.isNotEmpty(categories)){
+            categories.stream().forEach(x -> categoryMap.put(x.getId(), x.getName()));
+        }
 
         //封装DishDto的数据并填充categoryName值
         List<DishDto> processedRecords = rawPage.getRecords().stream().map(x -> {
@@ -95,17 +97,20 @@ public class DishController {
     }
 
     @PostMapping(value = "/status/{value}", params = {"ids"})
-    public R updateDishStatus(@PathVariable Integer value, String ids){
+    public R updateDishStatus(@PathVariable Integer value, List<Long> ids){
         String operate = value == 1 ? "启售" : "停售";
         log.info("员工ID[{}]{}了以下菜品: {}", ThreadContext.getOnlineUser().getId(), operate, ids);
-        List<Long> dishIds = CollUtil.map(StrUtil.split(ids, ","), Long::valueOf, true);
-        return R.judge(dishService.batchUpdateDishStatus(dishIds, value), "已成功"+operate+"指定的菜品", operate+"指定菜品失败");
+        return R.judge(dishService.batchUpdateDishStatus(ids, value), "已成功"+operate+"指定的菜品", operate+"指定菜品失败");
     }
 
     @DeleteMapping
-    public R deleteDish(@RequestParam("ids") String ids){
+    public R deleteDish(@RequestParam("ids") List<Long> ids){
         log.info("员工ID[{}]删除了以下菜品: {}", ThreadContext.getOnlineUser().getId(), ids);
-        List<Long> dishIds = CollUtil.map(StrUtil.split(ids, ","), Long::valueOf, true);
-        return R.judge(dishService.batchDeleteDish(dishIds), "已成功删除指定的菜品", "删除指定菜品失败");
+        return R.judge(dishService.batchDeleteDish(ids), "已成功删除指定的菜品", "删除指定菜品失败");
+    }
+
+    @GetMapping(value = "/list")
+    public R getDishByCategoryId(Long categoryId, String name){
+        return R.success(dishService.getDishByCategoryId(categoryId, name));
     }
 }

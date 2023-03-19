@@ -136,17 +136,17 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     public boolean batchDeleteDish(List<Long> ids) {
         if(CollUtil.isEmpty(ids)) return true;
 
-        //删除菜品信息
-        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(Dish::getId, ids);
-        boolean deleteDish = this.remove(queryWrapper);
-
         //删除菜品风味信息
         LambdaQueryWrapper<DishFlavor> flavorQueryWrapper = new LambdaQueryWrapper<>();
         flavorQueryWrapper.in(DishFlavor::getDishId, ids);
         long count = dishFlavorService.count(flavorQueryWrapper);
         //如果菜品没有关联的风味信息，则不再删除
         boolean deleteDishFlavor = count == 0 ? true : dishFlavorService.remove(flavorQueryWrapper);
+
+        //删除菜品信息
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Dish::getId, ids);
+        boolean deleteDish = this.remove(queryWrapper);
 
         return deleteDish && deleteDishFlavor;
     }
@@ -162,5 +162,16 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             dishes.add(dish);
         });
         return this.updateBatchById(dishes);
+    }
+
+    @Override
+    public List<Dish> getDishByCategoryId(Long categoryId, String name) {
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        //查询指定菜品分类下的所有启售的菜品
+        queryWrapper.eq(categoryId != null, Dish::getCategoryId, categoryId).eq(Dish::getStatus, 1);
+        //模糊查询相似菜名的菜品
+        queryWrapper.like(StrUtil.isNotEmpty(name), Dish::getName, name);
+        queryWrapper.orderByDesc(Dish::getUpdateTime);
+        return this.list(queryWrapper);
     }
 }
