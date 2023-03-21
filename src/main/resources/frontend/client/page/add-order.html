@@ -109,7 +109,8 @@
                         },
                         finishTime:'',//送达时间
                         cartData:[],
-                        note:''//备注信息
+                        note:'',//备注信息
+                        projectName: ''
                     }
                 },
                 computed:{
@@ -133,6 +134,7 @@
                     }
                 },
                 created(){
+                    this.projectName = window.localStorage.getItem("projectName");
                     this.initData()
                 },
                 mounted(){},
@@ -154,7 +156,7 @@
                            this.getFinishTime()
                         }else{
                             window.requestAnimationFrame(()=>{
-                                window.location.href = '/front/page/address-edit.html'
+                                window.location.href = '/'+this.projectName+'/client/page/address-edit.html'
                             })
                         }
                     },
@@ -173,7 +175,7 @@
                     },
                     toAddressPage(){
                         window.requestAnimationFrame(()=>{
-                            window.location.href = '/front/page/address.html'
+                            window.location.href = '/'+this.projectName+'/client/page/address.html'
                         })
                     },
                     //获取购物车数据
@@ -194,7 +196,7 @@
                         const res = await addOrderApi(params)
                         if(res.code === 1){
                             window.requestAnimationFrame(()=>{
-                                window.location.replace('/front/page/pay-success.html')
+                                window.location.replace('/'+this.projectName+'/client/page/pay-success.html')
                             })
                         }else{
                             this.$notify({ type:'warning', message:res.msg});

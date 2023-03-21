@@ -20,23 +20,25 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/employee")
+@PreAuthorize("hasAuthority('Admin')")
 public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
     @PostMapping("/login")
+    @PreAuthorize("permitAll()")
     public R login(@RequestBody Employee employee){
         return employeeService.handleLogin(employee);
     }
 
     @PostMapping("/logout")
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     public R logout(Authentication authentication){
         employeeService.handleLogout();
         return R.success(null);
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('Admin')")
     public R addEmployee(@RequestBody Employee employee){
         boolean addSuccess = employeeService.addEmployee(employee);
         String[] message = {"成功添加员工账户: "+employee.getUsername(), "新增员工账户失败"};
@@ -45,6 +47,7 @@ public class EmployeeController {
     }
 
     @GetMapping(value = "/page", params = {"page", "pageSize"})
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     public R queryEmployeePage(int page, int pageSize, String name){
         return R.success(employeeService.queryEmployeePage(page, pageSize, name));
     }
@@ -58,12 +61,14 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     public R queryEmployee(@PathVariable long id){
         Employee employee = employeeService.getById(id);
         return employee != null ? R.success(employee) : R.error("没有查到到对应的员工信息");
     }
 
     @GetMapping(value = "/{username}", params = {"id"})
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     public R ifUsernameAvailable(@PathVariable String username, long id){
         log.debug("检测用户名[{}]是否可用", username);
         Employee employee = employeeService.getEmployeeByUsername(username);
@@ -71,7 +76,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/account")
-    @PreAuthorize("#employee.username == authentication.principal.username")
+    @PreAuthorize("#employee.username == authentication.principal.username and hasAnyAuthority('Admin','Employee')")
     public R updateAccount(@RequestBody Employee employee, Authentication authentication){
         Long id = ((MyUserDetails) authentication.getPrincipal()).getId();
         employee.setId(id);

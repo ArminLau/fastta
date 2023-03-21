@@ -108,6 +108,7 @@
                 },
                 computed:{},
                 created(){
+                    this.projectName = window.localStorage.getItem("projectName");
                     this.initData()
                 },
                 mounted(){},
@@ -117,12 +118,12 @@
                     },
                     toAddressEditPage(item){
                         window.requestAnimationFrame(()=>{
-                            window.location.href= `/front/page/address-edit.html?id=${item.id}`
+                            window.location.href= '/'+this.projectName+`/client/page/address-edit.html?id=${item.id}`
                         })
                     },
                     toAddressCreatePage(){
                         window.requestAnimationFrame(()=>{
-                            window.location.href= '/front/page/address-edit.html'
+                            window.location.href= '/'+this.projectName+'/client/page/address-edit.html'
                         })
                     },
                     async initData(){

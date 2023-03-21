@@ -89,7 +89,8 @@
                 return {
                     form:{
                         phone:'',
-                        code:''
+                        code:'',
+                        projectName: ""
                     },
                     msgFlag:false,
                     order:[{
@@ -106,6 +107,7 @@
             },
             computed:{},
             created(){
+                this.projectName = window.localStorage.getItem("projectName");
                 this.userPhone =sessionStorage.getItem("userPhone")
                 this.initData()
             },
@@ -116,12 +118,12 @@
                 },
                 toAddressPage(){
                     window.requestAnimationFrame(()=>{
-                        window.location.href = '/front/page/address.html'
+                        window.location.href = '/'+this.projectName+'/client/page/address.html'
                     })  
                 },
                 toOrderPage(){
                     window.requestAnimationFrame(()=>{
-                        window.location.href = '/front/page/order.html'
+                        window.location.href = '/'+this.projectName+'/client/page/order.html'
                     }) 
                 },
                 initData(){
@@ -172,7 +174,7 @@
                     const res = await orderAgainApi({id:this.order[0].id})
                     if(res.code === 1){
                         window.requestAnimationFrame(()=>{
-                            window.location.href = '/front/index.html'
+                            window.location.href = '/'+this.projectName+'/client/index.html'
                         }) 
                     }else{
                         this.$notify({ type:'warning', message:res.msg});
@@ -182,7 +184,7 @@
                     const res = await loginoutApi()
                     if(res.code === 1){
                         window.requestAnimationFrame(()=>{
-                            window.location.href = '/front/page/login.html'
+                            window.location.href = '/'+this.projectName+'/client/page/login.html'
                         }) 
                     }else{
                         this.$notify({ type:'warning', message:res.msg});

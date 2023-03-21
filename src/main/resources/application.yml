@@ -7,21 +7,7 @@ spring:
   application:
     name: fastta
   profiles:
-    default: default
-  datasource:
-    druid:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/fastta?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-      username: root
-      password: root
-  redis:
-    host: localhost
-    port: 6379
-
-fastta:
-  upload-path: default
-  manage:
-    employee-default-password: 123456
+    active: dev
 
 mybatis-plus:
   configuration:
@@ -48,4 +34,7 @@ security:
       - /**/*.map
       - /employee/login
       - /employee/logout
+      - /user/sms
+      - /user/login
+      - /**/*.otf
 

@@ -147,4 +147,14 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
         boolean delSetmeal = this.remove(setmealQueryWrapper);
         return delSetmeal && delSetmealDish;
     }
+
+    @Override
+    public List<Setmeal> getSetmealList(Setmeal setmeal) {
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(setmeal.getCategoryId() != null, Setmeal::getCategoryId, setmeal.getCategoryId());
+        queryWrapper.like(StrUtil.isNotEmpty(setmeal.getName()), Setmeal::getName, setmeal.getName());
+        queryWrapper.eq(setmeal.getStatus() != null, Setmeal::getStatus, setmeal.getStatus());
+        queryWrapper.orderByDesc(Setmeal::getUpdateTime);
+        return this.list(queryWrapper);
+    }
 }

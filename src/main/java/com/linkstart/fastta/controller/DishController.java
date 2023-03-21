@@ -17,6 +17,7 @@ import com.linkstart.fastta.service.FlavorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/dish")
 @Slf4j
+@PreAuthorize("hasAnyAuthority('Admin','Employee')")
 public class DishController {
     @Autowired
     private DishService dishService;
@@ -47,7 +49,7 @@ public class DishController {
     private CategoryService categoryService;
 
     @PostMapping
-    public R saveDish(@RequestBody DishDto dishDto){
+    public R saveDishWithFlavor(@RequestBody DishDto dishDto){
         log.info("员工ID[{}]添加了新菜品: {}", ThreadContext.getOnlineUser().getId(), dishDto.getName());
         return R.judge(dishService.saveDish(dishDto), "保存菜品成功", "保存菜品失败");
     }
@@ -109,8 +111,14 @@ public class DishController {
         return R.judge(dishService.batchDeleteDish(ids), "已成功删除指定的菜品", "删除指定菜品失败");
     }
 
-    @GetMapping(value = "/list")
-    public R getDishByCategoryId(Long categoryId, String name){
-        return R.success(dishService.getDishByCategoryId(categoryId, name));
+    @PreAuthorize("hasAnyAuthority('Admin','Employee', 'Customer')")
+    @GetMapping("/list")
+    public R getDishList(Dish dish, boolean withFlavor){
+        //如果请求参数中的withFlavor为true, 则查询关联口味的菜品信息
+        if(withFlavor){
+            return R.success(dishService.getDishByCategoryIdWithFlavor(dish));
+        }else {
+            return R.success(dishService.getDishByCategoryId(dish));
+        }
     }
 }

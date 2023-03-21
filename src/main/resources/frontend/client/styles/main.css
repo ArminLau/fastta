@@ -583,6 +583,15 @@
   font-size: 12rem;
 }
 
+#main .dialogCart .divCartContent .divCartItem .divFlavor {
+  position: absolute;
+  right: 0;
+  top: 10rem;
+  display: flex;
+  line-height: 36rem;
+  height: 36rem;
+}
+
 #main .dialogCart .divCartContent .divCartItem .divNum {
   position: absolute;
   right: 0;

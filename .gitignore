@@ -4,6 +4,7 @@ target/
 !**/src/test/**/target/
 
 *.log
+!**/application-prod.yml
 
 ### STS ###
 .apt_generated

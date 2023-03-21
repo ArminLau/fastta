@@ -65,4 +65,11 @@ public interface SetmealService extends IService<Setmeal> {
      * @return
      */
     boolean batchDeleteSetmeal(List<Long> ids);
+
+    /**
+     * 根据提供的套餐条件查询套餐信息
+     * @param setmeal
+     * @return
+     */
+    List<Setmeal> getSetmealList(Setmeal setmeal);
 }

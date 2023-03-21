@@ -67,9 +67,11 @@ public interface DishService extends IService<Dish> {
 
     /**
      * 根据提供的有效菜品分类ID和菜品名称查询菜品信息
-     * @param categoryId 菜品分类ID
-     * @param name 菜品名称(模糊匹配)
-     * @return
      */
-    List<Dish> getDishByCategoryId(Long categoryId, String name);
+    List<Dish> getDishByCategoryId(Dish dish);
+
+    /**
+     * 根据有效的菜品分类I和名称查询菜品信息，菜品信息包含风味信息
+     */
+    List<DishDto> getDishByCategoryIdWithFlavor(Dish dish);
 }

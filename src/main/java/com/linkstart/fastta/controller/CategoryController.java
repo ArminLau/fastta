@@ -5,6 +5,7 @@ import com.linkstart.fastta.entity.Category;
 import com.linkstart.fastta.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/category")
 @Slf4j
+@PreAuthorize("hasAnyAuthority('Admin','Employee')")
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
@@ -46,6 +48,7 @@ public class CategoryController {
     }
 
     @GetMapping("/list")
+    @PreAuthorize("hasAnyAuthority('Admin','Employee', 'Customer')")
     public R queryCategory(Category category){
         return R.success(categoryService.queryCategory(category));
     }

@@ -1,3 +1,11 @@
+function sendMsg(phone) {
+    return $axios({
+        'url': '/user/sms',
+        'method': 'post',
+        params: {phone}
+    })
+}
+
 function loginApi(data) {
     return $axios({
       'url': '/user/login',

@@ -47,10 +47,12 @@ public class Dish implements Serializable {
     //0 停售 1 起售
     private Integer status;
 
-
     //顺序
     private Integer sort;
-
+//
+//    //菜品是否携带口味信息
+//    @TableField(exist = false)
+//    private boolean withFlavor;
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;

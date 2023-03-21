@@ -44,28 +44,30 @@
             el:"#pay_success",
             data(){
                 return {
-                    finishTime:''
+                    finishTime:'',
+                    projectName: ''
                 }
             },
             computed:{},
             created(){
+                this.projectName = window.localStorage.getItem("projectName");
                 this.getFinishTime()
             },
             mounted(){},
             methods:{
                 goBack(){
                     window.requestAnimationFrame(()=>{
-                        window.location.replace('/front/index.html')
+                        window.location.replace('/'+this.projectName+'/client/index.html')
                     })   
                 },
                 toOrderPage(){
                     window.requestAnimationFrame(()=>{
-                        window.location.replace('/front/page/order.html')
+                        window.location.replace('/'+this.projectName+'/client/page/order.html')
                     })  
                 },
                 toMainPage(){
                     window.requestAnimationFrame(()=>{
-                        window.location.replace('/front/index.html')
+                        window.location.replace('/'+this.projectName+'/client/index.html')
                     })  
                 },
                 //获取送达时间

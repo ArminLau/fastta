@@ -44,8 +44,8 @@
   // 响应拦截器
   service.interceptors.response.use(res => {
       console.log('---响应拦截器---',res)
-      if (res.data.code === 0 && res.data.msg === '未登录') {// 返回登录页面
-        window.top.location.href = '/front/page/login.html'
+      if (res.data.code === 4 && res.data.msg === '未登录') {// 返回登录页面
+        window.top.location.href = '/fastta/client/page/login.html'
       } else {
         return res.data
       }
@@ -66,7 +66,6 @@
         type: 'warning',
         duration: 5 * 1000
       })
-      //window.top.location.href = '/front/page/no-wify.html'
       return Promise.reject(error)
     }
   )

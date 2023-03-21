@@ -20,7 +20,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/manage/**").addResourceLocations("classpath:/frontend/manage/");
-        registry.addResourceHandler("/fastta/client/**").addResourceLocations("classpath:/frontend/client/");
+        registry.addResourceHandler("/client/**").addResourceLocations("classpath:/frontend/client/");
     }
 
     /**

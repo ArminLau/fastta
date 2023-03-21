@@ -20,7 +20,10 @@
       </head>
     <body>
         <div id="login" v-loading="loading">
-            <div class="divHead">登录</div>
+            <div class="divHead">
+                <img src="../images/login.png" width="50%" height="auto"/>
+                <h3>登录</h3>
+            </div>
             <div class="divContainer">
                 <el-input placeholder=" 请输入手机号码" v-model="form.phone"  maxlength='20'/></el-input>
                 <div class="divSplit"></div>
@@ -51,19 +54,30 @@
                         code:''
                     },
                     msgFlag:false,
-                    loading:false
+                    loading:false,
+                    projectName: 'fastta'
                 }
             },
             computed:{},
-            created(){},
+            created(){
+                window.localStorage.setItem("projectName", this.projectName);
+            },
             mounted(){},
             methods:{
                 getCode(){
                     this.form.code = ''
                     const regex = /^(13[0-9]{9})|(15[0-9]{9})|(17[0-9]{9})|(18[0-9]{9})|(19[0-9]{9})$/;
                     if (regex.test(this.form.phone)) {
-                        this.msgFlag = false
-                        this.form.code = (Math.random()*1000000).toFixed(0)
+                        this.msgFlag = false;
+                        sendMsg(this.form.phone).then(res => {
+                            if(res.code == 1){
+                                // this.$message.success(res.msg);
+                                this.$notify({ type:'success', message:res.msg});
+                            }else {
+                                // this.$message.error(res.msg);
+                                this.$notify({ type:'error', message:res.msg});
+                            }
+                        })
                     }else{
                         this.msgFlag = true
                     }
@@ -71,12 +85,12 @@
                 async btnLogin(){
                     if(this.form.phone && this.form.code){
                         this.loading = true
-                        const res = await loginApi({phone:this.form.phone})
+                        const res = await loginApi({phone:this.form.phone, code: this.form.code})
                         this.loading = false
                         if(res.code === 1){
                             sessionStorage.setItem("userPhone",this.form.phone)
                             window.requestAnimationFrame(()=>{
-                                window.location.href= '/front/index.html'
+                                window.location.href= '/fastta/client/index.html'
                             })                           
                         }else{
                             this.$notify({ type:'warning', message:res.msg});

@@ -13,6 +13,7 @@ import com.linkstart.fastta.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/setmeal")
 @Slf4j
+@PreAuthorize("hasAnyAuthority('Admin','Employee')")
 public class SetmealController {
     @Autowired
     private SetmealService setmealService;
@@ -97,5 +99,11 @@ public class SetmealController {
     public R batchDeleteSetmeal(@RequestParam List<Long> ids){
         log.info("员工ID[{}]删除了以下套餐: {}", ThreadContext.getOnlineUser().getId(), ids);
         return R.judge(setmealService.batchDeleteSetmeal(ids), "成功删除指定的套餐", "删除指定的套餐失败");
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee', 'Customer')")
+    @GetMapping("/list")
+    public R getSetmealList(Setmeal setmeal){
+        return R.success(setmealService.getSetmealList(setmeal));
     }
 }

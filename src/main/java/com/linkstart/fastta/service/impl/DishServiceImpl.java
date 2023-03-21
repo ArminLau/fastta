@@ -16,6 +16,7 @@ import com.linkstart.fastta.service.FlavorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -165,13 +166,38 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     }
 
     @Override
-    public List<Dish> getDishByCategoryId(Long categoryId, String name) {
+    public List<Dish> getDishByCategoryId(Dish dish) {
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         //查询指定菜品分类下的所有启售的菜品
-        queryWrapper.eq(categoryId != null, Dish::getCategoryId, categoryId).eq(Dish::getStatus, 1);
-        //模糊查询相似菜名的菜品
-        queryWrapper.like(StrUtil.isNotEmpty(name), Dish::getName, name);
+        queryWrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
+        //如果查询的dish对象中包含菜品名称，则查询名称类似的菜品
+        queryWrapper.like(StrUtil.isNotEmpty(dish.getName()), Dish::getName, dish.getName());
+        //如果菜品的状态也有指定，那么也添加入查询条件
+        queryWrapper.eq(dish.getStatus() != null, Dish::getStatus, dish.getStatus());
         queryWrapper.orderByDesc(Dish::getUpdateTime);
         return this.list(queryWrapper);
+    }
+
+    @Override
+    public List<DishDto> getDishByCategoryIdWithFlavor(Dish dishObj) {
+        List<Dish> dishes = this.getDishByCategoryId(dishObj);
+        if(CollUtil.isEmpty(dishes)) return (new ArrayList<>());
+
+        List<DishDto> dishDtos = new ArrayList<>();
+
+        List<DishFlavor> flavors = dishFlavorService.list();
+        //如果风味信息不为空，则针对每一种菜品配置其相应的风味信息
+        if(CollUtil.isNotEmpty(flavors)){
+            dishDtos = dishes.stream().map(dish -> {
+                DishDto dishDto = new DishDto();
+                //将菜品属性值拷贝到DishDto对象上
+                BeanUtils.copyProperties(dish, dishDto);
+                Long dishDtoId = dishDto.getId();
+                //给DishDto对象设置口味
+                dishDto.setFlavors(flavors.stream().filter(x -> x.getDishId().equals(dishDtoId)).collect(Collectors.toList()));
+                return dishDto;
+            }).collect(Collectors.toList());
+        }
+        return dishDtos;
     }
 }

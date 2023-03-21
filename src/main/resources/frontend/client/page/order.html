@@ -81,6 +81,7 @@
                     orderList:[],
                     loading:false,
                     finished:false
+                    projectName: ''
                 }
             },
             computed:{},
@@ -94,7 +95,7 @@
                     //表示是从订单页面跳转过来的
                     if(url.includes('success')){
                         window.requestAnimationFrame(()=>{
-                                window.location.href= '/front/index.html'
+                                window.location.href= '/'+this.projectName+'/client/index.html'
                         })   
                     }else{
                         history.go(-1)
@@ -102,6 +103,7 @@
                 },
                 initData(){
                     this.getList()
+                    this.projectName = window.localStorage.getItem("projectName");
                 },
                 async getList(){
                     if(this.finished){
@@ -134,7 +136,7 @@
                     const res = await orderAgainApi({id:order.id})
                     if(res.code === 1){
                         window.requestAnimationFrame(()=>{
-                            window.location.href= '/front/index.html'
+                            window.location.href= '/'+this.projectName+'/front/index.html'
                         })
                     }else{
                         this.$notify({ type:'warning', message:res.msg});
