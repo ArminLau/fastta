@@ -2,8 +2,8 @@
 const getOrderDetailPage = (params) => {
   return $axios({
     url: '/order/page',
-    method: 'get',
-    params
+    method: 'post',
+    data: { ...params }
   })
 }
 

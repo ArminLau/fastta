@@ -125,6 +125,7 @@
   line-height: 36rem;
   letter-spacing: 0;
   position: relative;
+  background-color: #ffc200;
 }
 
 #order .divNoData {

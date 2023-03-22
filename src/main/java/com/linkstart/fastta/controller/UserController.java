@@ -47,4 +47,9 @@ public class UserController {
         }
         return R.error("登录异常");
     }
+
+    @PostMapping("/logout")
+    public R logout(){
+        return R.success(null);
+    }
 }

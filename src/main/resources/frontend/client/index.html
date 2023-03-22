@@ -58,13 +58,15 @@
                 <div class="divDesc">{{item.description}}</div>
                 <div class="divDesc">{{'月销' + (item.saleNum ? item.saleNum : 0)  }}</div>
                 <div class="divBottom"><span>￥</span><span>{{item.price/100}}</span></div>
-                <div class="divNum">
+                <div class="divNum" v-if="item.flavors && item.flavors.length > 0">
+                  <div class="divTypes" @click.prevent.stop="chooseFlavorClick(item)">选择规格</div>
+                </div>
+                <div class="divNum" v-else>
                   <div class="divSubtract" v-if="item.number > 0">
                     <img src="./images/subtract.png" @click.prevent.stop="subtractCart(item)"/>
                   </div>
                   <div class="divDishNum">{{item.number}}</div>
-                  <div class="divTypes" v-if="item.flavors && item.flavors.length > 0 && !item.number " @click.prevent.stop="chooseFlavorClick(item)">选择规格</div>
-                  <div class="divAdd" v-else>
+                  <div class="divAdd">
                     <img src="./images/add.png" @click.prevent.stop="addCart(item)"/>
                   </div>
                 </div>

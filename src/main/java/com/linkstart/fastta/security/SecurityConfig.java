@@ -61,7 +61,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(restAccessDeniedHandler)
                         //自定义未登录EntryPoint
                         .authenticationEntryPoint(restAuthenticationEntryPoint))
-                .logout(logout -> logout.logoutUrl("/employee/logout").invalidateHttpSession(true));
+                .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/**/logout")).invalidateHttpSession(true));
         return http.build();
     }
 }

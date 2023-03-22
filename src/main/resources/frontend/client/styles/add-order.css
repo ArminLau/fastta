@@ -164,7 +164,21 @@
   line-height: 22rem;
   letter-spacing: 0;
   margin-left: 10rem;
-  margin-bottom: 16rem;
+  margin-bottom: 0rem;
+}
+
+#add_order .divContent .order .itemList .item .desc .flavor {
+  height: 12rem;
+  opacity: 1;
+  font-size: 10rem;
+  font-family: PingFangSC, PingFangSC-Semibold;
+  font-weight: 300;
+  text-align: left;
+  color: #20232a;
+  line-height: 22rem;
+  letter-spacing: 0;
+  margin-left: 10rem;
+  margin-bottom: 4rem;
 }
 
 #add_order .divContent .order .itemList .item .desc .numPrice {

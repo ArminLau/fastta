@@ -1,5 +1,6 @@
 package com.linkstart.fastta.entity;
 
+import cn.hutool.core.util.StrUtil;
 import com.linkstart.fastta.common.MyUserDetails;
 import com.linkstart.fastta.common.SecurityRole;
 import lombok.Data;
@@ -50,6 +51,10 @@ public class User implements MyUserDetails {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(SecurityRole.CUSTOMER.getRoleName()));
         return grantedAuthorities;
+    }
+
+    public String getName(){
+        return StrUtil.isEmpty(this.name) ? this.phone : this.name;
     }
 
     @Override

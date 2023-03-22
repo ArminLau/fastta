@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no,minimal-ui">
-    <title>菩提阁</title>
+    <title>极速外卖</title>
     <link rel="icon" href="./../images/favico.ico">
     <!--element-ui的样式-->
     <link rel="stylesheet" href="../../manage/plugins/element-ui/index.css" />
@@ -53,6 +53,7 @@
                 <div class="dishList">
                     <div v-for="(item,index) in order[0].orderDetails" :key="index" class="item">
                         <span>{{item.name}}</span>
+                        <span>{{item.dishFlavor}}</span>
                         <span>x{{item.number}}</span>
                     </div>
                 </div>
@@ -132,7 +133,8 @@
                 async getLatestOrder(){
                     const params = {
                         page:1,
-                        pageSize:1
+                        pageSize:1,
+                        withDetail: true
                     }
                     const res = await orderPagingApi(params)
                     if(res.code === 1){
