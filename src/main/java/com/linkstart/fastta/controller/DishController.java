@@ -10,10 +10,7 @@ import com.linkstart.fastta.entity.Category;
 import com.linkstart.fastta.entity.Dish;
 import com.linkstart.fastta.entity.Employee;
 import com.linkstart.fastta.entity.Flavor;
-import com.linkstart.fastta.service.CategoryService;
-import com.linkstart.fastta.service.DishFlavorService;
-import com.linkstart.fastta.service.DishService;
-import com.linkstart.fastta.service.FlavorService;
+import com.linkstart.fastta.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +45,14 @@ public class DishController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private DishCacheService dishCacheService;
+
     @PostMapping
     public R saveDishWithFlavor(@RequestBody DishDto dishDto){
         log.info("员工ID[{}]添加了新菜品: {}", ThreadContext.getOnlineUser().getId(), dishDto.getName());
+        //清除对应菜品分类的Redis缓存
+        dishCacheService.delDishByCategoryIds(dishDto.getCategoryId());
         return R.judge(dishService.saveDish(dishDto), "保存菜品成功", "保存菜品失败");
     }
 
@@ -90,6 +92,12 @@ public class DishController {
     @PutMapping
     public R updateDish(@RequestBody DishDto dishDto){
         log.info("员工ID[{}]更新了菜品: {}", ThreadContext.getOnlineUser().getId(), dishDto.getId());
+        Dish dish = dishService.getById(dishDto.getId());
+        if(dish == null){
+            return R.error("菜品不存在，菜品信息更新失败");
+        }
+        //清除菜品更新前后所属分类的Redis缓存
+        dishCacheService.delDishByCategoryIds(dishDto.getCategoryId(), dish.getCategoryId());
         return R.judge(dishService.updateDishWithFlavor(dishDto), "菜品信息更新成功", "菜品信息更新失败");
     }
 
@@ -98,27 +106,35 @@ public class DishController {
         return R.success(dishService.getDishWithFlavor(id));
     }
 
-    @PostMapping(value = "/status/{value}", params = {"ids"})
-    public R updateDishStatus(@PathVariable Integer value, List<Long> ids){
+    @PostMapping(value = "/status/{value}")
+    public R updateDishStatus(@PathVariable Integer value, @RequestParam("ids") List<Long> ids){
         String operate = value == 1 ? "启售" : "停售";
         log.info("员工ID[{}]{}了以下菜品: {}", ThreadContext.getOnlineUser().getId(), operate, ids);
+        //清除所有菜品分类的Redis缓存
+        dishCacheService.delDish();
         return R.judge(dishService.batchUpdateDishStatus(ids, value), "已成功"+operate+"指定的菜品", operate+"指定菜品失败");
     }
 
     @DeleteMapping
     public R deleteDish(@RequestParam("ids") List<Long> ids){
         log.info("员工ID[{}]删除了以下菜品: {}", ThreadContext.getOnlineUser().getId(), ids);
+        //清除所有菜品分类的Redis缓存
+        dishCacheService.delDish();
         return R.judge(dishService.batchDeleteDish(ids), "已成功删除指定的菜品", "删除指定菜品失败");
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee', 'Customer')")
     @GetMapping("/list")
     public R getDishList(Dish dish, boolean withFlavor){
-        //如果请求参数中的withFlavor为true, 则查询关联口味的菜品信息
-        if(withFlavor){
-            return R.success(dishService.getDishByCategoryIdWithFlavor(dish));
-        }else {
-            return R.success(dishService.getDishByCategoryId(dish));
+        //默认只查询启售的菜品
+        dish.setStatus(1);
+        List<? extends Dish> cacheDishes = dishCacheService.getDishByCategoryId(dish, withFlavor);
+        if(CollUtil.isEmpty(cacheDishes)){
+            //如果请求参数中的withFlavor为true, 则查询关联口味的菜品信息
+            cacheDishes = withFlavor ? dishService.getDishByCategoryIdWithFlavor(dish) : dishService.getDishByCategoryId(dish);
+            //将菜品信息存储入Redis
+            dishCacheService.setDishByCategoryId(cacheDishes, true, withFlavor);
         }
+        return R.success(cacheDishes);
     }
 }

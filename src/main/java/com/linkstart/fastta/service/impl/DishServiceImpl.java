@@ -10,6 +10,7 @@ import com.linkstart.fastta.entity.Dish;
 import com.linkstart.fastta.entity.DishFlavor;
 import com.linkstart.fastta.entity.Flavor;
 import com.linkstart.fastta.mapper.DishMapper;
+import com.linkstart.fastta.service.DishCacheService;
 import com.linkstart.fastta.service.DishFlavorService;
 import com.linkstart.fastta.service.DishService;
 import com.linkstart.fastta.service.FlavorService;
