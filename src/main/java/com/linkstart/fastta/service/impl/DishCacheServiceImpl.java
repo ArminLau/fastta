@@ -25,7 +25,7 @@ public class DishCacheServiceImpl implements DishCacheService {
     //菜品信息默认的Redis缓存时间
     private static final Long DISH_EXPIRE_SECONDS = 60 * 60L;
 
-    private static final String DISH_CACHE_PREFIX = "Dish";
+    private static final String DISH_CACHE_PREFIX = "DishCache";
 
     @Override
     public List<? extends Dish> getDishByCategoryId(Dish dish, boolean withFlavor) {
