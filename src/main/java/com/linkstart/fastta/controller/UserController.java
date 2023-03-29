@@ -6,6 +6,8 @@ import com.linkstart.fastta.service.UserCacheService;
 import com.linkstart.fastta.service.UserService;
 import com.linkstart.fastta.service.impl.UserCacheServiceImpl;
 import com.linkstart.fastta.util.SmsUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/user")
 @PreAuthorize("hasAuthority('Customer')")
+@Api(tags = "顾客管理接口")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -30,6 +33,7 @@ public class UserController {
     @Autowired
     private UserCacheService userCacheService;
 
+    @ApiOperation("顾客登录请求发送手机登录验证码")
     @PostMapping("/sms")
     @PreAuthorize("permitAll()")
     public R sendLoginVerificationCode(@RequestParam String phone, HttpServletRequest request) throws Exception{
@@ -45,6 +49,7 @@ public class UserController {
         return R.judge(code!=null, "验证码发送成功，请注意查收", "短信发送失败");
     }
 
+    @ApiOperation("顾客登录账户")
     @PostMapping("/login")
     @PreAuthorize("permitAll()")
     public R login(@RequestBody Map<String,String> map, HttpServletRequest request){
@@ -59,6 +64,7 @@ public class UserController {
         return R.error("登录异常");
     }
 
+    @ApiOperation("顾客登出账户")
     @PostMapping("/logout")
     public R logout(){
         return R.success(null);

@@ -6,7 +6,7 @@ package com.linkstart.fastta.common;
  * @Description: 描述用户角色的枚举类
  */
 
-public enum  SecurityRole {
+public enum SecurityRole {
     ADMIN("Admin"),
     EMPLOYEE("Employee"),
     CUSTOMER("Customer");

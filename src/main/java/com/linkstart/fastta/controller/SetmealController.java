@@ -10,6 +10,8 @@ import com.linkstart.fastta.entity.Setmeal;
 import com.linkstart.fastta.service.CategoryService;
 import com.linkstart.fastta.service.SetmealDishService;
 import com.linkstart.fastta.service.SetmealService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/setmeal")
 @Slf4j
 @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+@Api(tags = "套餐管理接口")
 public class SetmealController {
     @Autowired
     private SetmealService setmealService;
@@ -39,6 +42,7 @@ public class SetmealController {
     @Autowired
     private CategoryService categoryService;
 
+    @ApiOperation("分页查询所有的套餐")
     @GetMapping(value = "/page", params = {"page", "pageSize"})
     public R getSetmealPage(int page, int pageSize, String name){
         Page<Setmeal> rawPage = setmealService.getSetmealPage(page, pageSize, name);
@@ -72,23 +76,27 @@ public class SetmealController {
         return R.success(processedPage);
     }
 
+    @ApiOperation("添加套餐")
     @PostMapping
     public R saveSetmeal(@RequestBody SetmealDto setmealDto){
         log.info("员工ID[{}]添加了新套餐: {}", ThreadContext.getOnlineUser().getId(), setmealDto.getName());
         return R.judge(setmealService.addSetmealWithDish(setmealDto), "成功添加套餐", "添加套餐失败");
     }
 
+    @ApiOperation("根据ID查询相应的套餐信息")
     @GetMapping("/{id}")
     public R getSetmeal(@PathVariable Long id){
         return R.success(setmealService.getSetmealWithDish(id));
     }
 
+    @ApiOperation("修改套餐")
     @PutMapping
     public R updateSetmeal(@RequestBody SetmealDto setmealDto){
         log.info("员工ID[{}]添加了套餐: {}", ThreadContext.getOnlineUser().getId(), setmealDto.getId());
         return R.judge(setmealService.updateSetmealWithDish(setmealDto), "成功更新套餐", "更新套餐失败");
     }
 
+    @ApiOperation("批量启售/停售套餐")
     @PostMapping("/status/{value}")
     public R batchUpdateSetmealStatus(@PathVariable Integer value, @RequestParam List<Long> ids){
         String operate = value == 1 ? "启售" : "停售";
@@ -96,12 +104,14 @@ public class SetmealController {
         return R.judge(setmealService.batchUpdateSetmealStatus(ids, value), "成功"+operate+"指定的套餐", operate+"指定套餐失败");
     }
 
+    @ApiOperation("批量删除套餐")
     @DeleteMapping
     public R batchDeleteSetmeal(@RequestParam List<Long> ids){
         log.info("员工ID[{}]删除了以下套餐: {}", ThreadContext.getOnlineUser().getId(), ids);
         return R.judge(setmealService.batchDeleteSetmeal(ids), "成功删除指定的套餐", "删除指定的套餐失败");
     }
 
+    @ApiOperation("根据提供的查询条件查询套餐信息")
     @PreAuthorize("hasAnyAuthority('Admin','Employee', 'Customer')")
     @GetMapping("/list")
     public R getSetmealList(Setmeal setmeal){

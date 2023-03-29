@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.linkstart.fastta.common.MyUserDetails;
 import com.linkstart.fastta.common.SecurityRole;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,35 +22,48 @@ import java.util.List;
  * @Description: 员工的实体类
  */
 @Data
+@ApiModel("员工")
 public class Employee implements MyUserDetails {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty("主键")
     private Long id;
 
+    @ApiModelProperty("员工账户名")
     private String username;
 
+    @ApiModelProperty("员工真实姓名")
     private String name;
 
+    @ApiModelProperty("员工登录密码")
     private String password;
 
+    @ApiModelProperty("员工联系手机号")
     private String phone;
 
+    @ApiModelProperty("员工性别")
     private String sex;
 
-    private String idNumber;//身份证号码
+    @ApiModelProperty("身份证号码")
+    private String idNumber;
 
+    @ApiModelProperty("员工账户是否启用: 0 停用  1 启用")
     private Integer status;
 
+    @ApiModelProperty("创建时间")
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
+    @ApiModelProperty("更新时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
+    @ApiModelProperty("创建人")
     @TableField(fill = FieldFill.INSERT)
     private Long createUser;
 
+    @ApiModelProperty("最近的修改人")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long updateUser;
 
@@ -96,6 +111,4 @@ public class Employee implements MyUserDetails {
     public boolean isEnabled() {
         return this.status == 1 ? true : false;
     }
-
-
 }
