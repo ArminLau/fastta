@@ -11,6 +11,10 @@ import com.linkstart.fastta.entity.Dish;
 import com.linkstart.fastta.entity.Employee;
 import com.linkstart.fastta.entity.Flavor;
 import com.linkstart.fastta.service.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/dish")
 @Slf4j
 @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+@Api(tags = "菜品管理接口")
 public class DishController {
     @Autowired
     private DishService dishService;
@@ -48,6 +53,7 @@ public class DishController {
     @Autowired
     private DishCacheService dishCacheService;
 
+    @ApiOperation("添加菜品")
     @PostMapping
     public R saveDishWithFlavor(@RequestBody DishDto dishDto){
         log.info("员工ID[{}]添加了新菜品: {}", ThreadContext.getOnlineUser().getId(), dishDto.getName());
@@ -56,11 +62,13 @@ public class DishController {
         return R.judge(dishService.saveDish(dishDto), "保存菜品成功", "保存菜品失败");
     }
 
+    @ApiOperation("获取所有的菜品口味信息")
     @GetMapping("/flavor")
     public R getFlavor(){
         return R.success(flavorService.getFlavor());
     }
 
+    @ApiOperation("分页查询菜品信息")
     @GetMapping(value = "/page", params = {"page", "pageSize"})
     public R getDishPage(int page, int pageSize, String name){
         Page<Dish> rawPage = dishService.queryDishPage(page, pageSize, name);
@@ -89,6 +97,7 @@ public class DishController {
         return R.success(processedPage);
     }
 
+    @ApiOperation("修改菜品")
     @PutMapping
     public R updateDish(@RequestBody DishDto dishDto){
         log.info("员工ID[{}]更新了菜品: {}", ThreadContext.getOnlineUser().getId(), dishDto.getId());
@@ -101,11 +110,13 @@ public class DishController {
         return R.judge(dishService.updateDishWithFlavor(dishDto), "菜品信息更新成功", "菜品信息更新失败");
     }
 
+    @ApiOperation("根据ID获取相应菜品的信息")
     @GetMapping("/{id}")
     public R getDish(@PathVariable Long id){
         return R.success(dishService.getDishWithFlavor(id));
     }
 
+    @ApiOperation("批量启售/停售菜品")
     @PostMapping(value = "/status/{value}")
     public R updateDishStatus(@PathVariable Integer value, @RequestParam("ids") List<Long> ids){
         String operate = value == 1 ? "启售" : "停售";
@@ -115,6 +126,7 @@ public class DishController {
         return R.judge(dishService.batchUpdateDishStatus(ids, value), "已成功"+operate+"指定的菜品", operate+"指定菜品失败");
     }
 
+    @ApiOperation("批量删除菜品")
     @DeleteMapping
     public R deleteDish(@RequestParam("ids") List<Long> ids){
         log.info("员工ID[{}]删除了以下菜品: {}", ThreadContext.getOnlineUser().getId(), ids);
@@ -123,6 +135,7 @@ public class DishController {
         return R.judge(dishService.batchDeleteDish(ids), "已成功删除指定的菜品", "删除指定菜品失败");
     }
 
+    @ApiOperation("根据提供的菜品条件查询相关的菜品")
     @PreAuthorize("hasAnyAuthority('Admin','Employee', 'Customer')")
     @GetMapping("/list")
     public R getDishList(Dish dish, boolean withFlavor){

@@ -6,6 +6,8 @@ import cn.hutool.core.util.IdUtil;
 import com.linkstart.fastta.common.R;
 import com.linkstart.fastta.entity.Employee;
 import com.linkstart.fastta.exception.SystemTransactionException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -29,10 +31,12 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/common")
 @Slf4j
+@Api(tags = "通用管理接口")
 public class CommonController {
     @Value("${fastta.upload-path}")
     private String uploadPath;
 
+    @ApiOperation("上传图片或其他文件")
     @PostMapping("/upload")
     public R upload(@RequestParam(value = "file", required = true) MultipartFile file) throws IOException {
         Employee employee = (Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -42,6 +46,7 @@ public class CommonController {
         return R.success((Object) filename);
     }
 
+    @ApiOperation("下载图片或其他文件")
     @GetMapping(value = "/download", params = {"name"})
     public void download(String name, HttpServletResponse response) throws IOException{
         String filePath = getUploadPath() + File.separator + name;

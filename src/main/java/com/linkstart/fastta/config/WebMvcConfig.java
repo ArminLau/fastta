@@ -21,6 +21,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/manage/**").addResourceLocations("classpath:/frontend/manage/");
         registry.addResourceHandler("/client/**").addResourceLocations("classpath:/frontend/client/");
+        registry.addResourceHandler("/swagger-ui/*").addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/");
     }
 
     /**
